@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { Phone, MapPin, PartyPopper, Store, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Phone, MapPin, PartyPopper, Store, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaFacebookMessenger } from 'react-icons/fa';
 
@@ -290,7 +290,8 @@ export default function Home() {
             {currentHero.description}
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 pt-2 md:pt-4">
+                  {/* Botones de acción */}
+          <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
             <a 
               href="https://wa.me/526863403935"
               className="flex justify-center items-center gap-2 bg-[#1A1A1A] text-white px-8 py-3.5 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-black transition-transform hover:scale-105 duration-300 shadow-xl shadow-black/10"
@@ -303,6 +304,17 @@ export default function Home() {
             >
               {activeTab === 'eventos' ? 'Ver más' : 'Ver Menú'}
             </a>
+          </div>
+
+          {/* Indicador de métodos de pago */}
+          <div className="flex items-center justify-center md:justify-start gap-2.5 text-sm text-gray-500 font-medium animate-fade-in">
+            <CreditCard size={18} className="text-gray-400" />
+            <span>Aceptamos pagos con tarjeta</span>
+            <img 
+              src="/mercado_pago.png" 
+              alt="Mercado Pago" 
+              className="h-15 w-auto object-contain ml-1 opacity-90 hover:opacity-100 transition-opacity" 
+            />
           </div>
         </div>
         
@@ -339,6 +351,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Sección de Ubicación (Solo visible en modo Snack) */}
+      {activeTab === 'snack' && (
+        <section className="bg-white py-16 md:py-24 border-t border-gray-200 animate-fade-in-up">
+          <div className="max-w-7xl mx-auto px-6 md:px-8">
+            <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+              
+              {/* Texto y Botón */}
+              <div className="flex-1 text-center md:text-left space-y-6">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
+                  ¿Ya pediste pero no sabes dónde nos ubicamos?
+                </h2>
+                <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+                  Ven por tus snacks o encuéntranos fácilmente. Dale clic al botón para abrir la ruta en tu celular o guíate con nuestro mapa interactivo.
+                </p>
+                <div className="pt-2 flex justify-center md:justify-start">
+                  <a 
+                    href="https://maps.app.goo.gl/imzA4ngpBe5xkBiC9" 
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-3.5 rounded-full text-base md:text-lg font-medium hover:bg-black transition-transform hover:scale-105 duration-300 shadow-xl shadow-black/10"
+                  >
+                    <MapPin size={20} />
+                    Abrir en Google Maps
+                  </a>
+                </div>
+              </div>
+
+              {/* Pantalla del Mapa (Iframe) */}
+              <div className="flex-1 w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden shadow-lg border-4 border-gray-50 bg-gray-100">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.7148845267875!2d-115.00484793038352!3d32.57177142853233!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d7a9001824e9ed%3A0xd7c065fa0573e41e!2sMoed!5e1!3m2!1ses!2smx!4v1792896311896!5m2!1ses!2smx" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={true} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Ubicación MOED"
+                />
+              </div>
+              
+            </div>
+          </div>
+        </section>
+      )}
+
       <footer className="bg-[#1A1A1A] text-white py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
@@ -368,7 +426,7 @@ export default function Home() {
             <h4 className="font-bold mb-4 md:mb-6 uppercase tracking-wider text-sm">Redes Sociales</h4>
             <div className="flex gap-4 justify-center md:justify-start">
               <a 
-                href="https://www.facebook.com/profile.php?id=61593983091507" 
+                href="https://www.facebook.com/profile.php?id=61593586598972" 
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#1877F2] transition-colors duration-300"
