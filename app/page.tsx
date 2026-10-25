@@ -1,141 +1,344 @@
+"use client";
+import React, { useState } from 'react';
 import Head from 'next/head';
-import { Phone, MapPin, Star, Coffee } from 'lucide-react';
+import { Phone, MapPin, PartyPopper, Store, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { FaFacebook, FaInstagram, FaWhatsapp, FaFacebookMessenger} from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaWhatsapp, FaFacebookMessenger } from 'react-icons/fa';
 
-// Interfaz para los elementos del menú
+// 1. Interfaz actualizada: agregamos 'image' opcional en las variantes
+interface MenuVariant {
+  name: string;
+  description: string;
+  price: string;
+  image?: string; // <--- Nueva propiedad
+}
+
 interface MenuItem {
   id: number;
   name: string;
-  description: string;
   image: string;
+  description?: string;
   price?: string;
+  variants?: MenuVariant[];
 }
 
+// 2. Componente de tarjeta con imagen dinámica
+const MenuCard = ({ item }: { item: MenuItem }) => {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const hasVariants = item.variants && item.variants.length > 0;
+  
+  // Extraemos la información activa, incluyendo la imagen
+  const currentPrice = hasVariants ? item.variants![activeIdx].price : item.price;
+  const currentDesc = hasVariants ? item.variants![activeIdx].description : item.description;
+  const currentVariantName = hasVariants ? item.variants![activeIdx].name : null;
+  
+  // Si la variante tiene imagen propia, la usamos; si no, usamos la general del item
+  const currentImage = hasVariants && item.variants![activeIdx].image 
+    ? item.variants![activeIdx].image 
+    : item.image;
+
+  const nextVariant = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (hasVariants) setActiveIdx((prev) => (prev + 1) % item.variants!.length);
+  };
+
+  const prevVariant = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (hasVariants) setActiveIdx((prev) => (prev === 0 ? item.variants!.length - 1 : prev - 1));
+  };
+
+  return (
+    <div className="w-[65vw] max-w-[280px] md:max-w-none md:w-auto snap-center md:snap-align-none shrink-0 group flex flex-col">
+      <div className="aspect-[4/5] bg-[#FDFBF7] rounded-2xl mb-4 overflow-hidden relative shadow-sm">
+        {/* El atributo key fuerza la re-animación cuando la URL de la imagen cambia */}
+        <Image 
+          key={currentImage}
+          src={currentImage!} 
+          alt={item.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500 animate-fade-in"
+          sizes="(max-width: 768px) 280px, 33vw"
+        />
+        {currentPrice && (
+          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur text-black font-bold px-3 py-1.5 rounded-full shadow-lg text-sm transition-all duration-300">
+            {currentPrice}
+          </div>
+        )}
+      </div>
+
+      <h3 className="text-lg md:text-xl font-bold mb-2">{item.name}</h3>
+
+      {/* Selector de variantes si existen */}
+      {hasVariants && (
+        <div className="flex items-center justify-between bg-gray-100/80 rounded-full px-2 py-1 mb-3">
+          <button 
+            onClick={prevVariant}
+            className="p-1 hover:bg-white rounded-full transition-colors"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          
+          <span className="text-sm font-semibold text-gray-800 flex-1 text-center truncate px-2">
+            {currentVariantName}
+          </span>
+          
+          <button 
+            onClick={nextVariant}
+            className="p-1 hover:bg-white rounded-full transition-colors"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      )}
+
+      {/* Descripción animada al cambiar */}
+      <p key={activeIdx} className="text-gray-600 text-sm md:text-base leading-relaxed min-h-[80px] animate-fade-in flex-grow">
+        {currentDesc}
+      </p>
+
+      {/* Indicadores de página */}
+      {hasVariants && item.variants!.length > 1 && (
+        <div className="flex justify-center gap-1.5 mt-4">
+          {item.variants!.map((_, idx) => (
+            <div 
+              key={idx} 
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === activeIdx ? 'bg-black' : 'bg-gray-300'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function Home() {
-  const menuItems: MenuItem[] = [
+  const [activeTab, setActiveTab] = useState<'eventos' | 'snack'>('eventos');
+
+  const menuEventos: MenuItem[] = [
     {
       id: 1,
       name: "QUIENES SOMOS?",
       description: "En MOED creemos que cada evento merece un detalle especial. Creamos barras de snacks elegantes y personalizadas, diseñadas para complementar la esencia de cada celebración y brindar a tus invitados una experiencia que combine sabor, estilo y sofisticación.",
-      image: "/barrita.jpg",
+      image: "/i6.jpg",
     },
     {
       id: 2,
-      name: "Bebidas Refrescantes",
-      description: "Variedad de bebidas preparadas al momento, servidas desde nuestra cristalería estilo vintage.",
-      image: "/carrito.jpg",
+      name: "SNACK BAR LISTA",
+      description: "Variedad de snacks, servidos desde nuestra cristalería estilo vintage.",
+      image: "/barra_lado.jpg",
     },
     {
       id: 3,
-      name: "Barra de Snacks Salados",
-      description: "Selección de botanas, cacahuates y complementos con limón fresco y salsas a elegir.",
-      image: "/snacks.jpg",
+      name: "MOED ES PARTE DE TUS MOMENTOS ESPECIALES",
+      description: "Gracias por confiar en MOED para darle ese toque especial a su evento. Tú celebras, nosotros hacemos que cada detalle brille. Agenda tu fecha con nosotros y haz de tu evento un momento único.",
+      image: "/i5.jpg",
     }
   ];
 
+  // 3. Datos de snacks con imágenes individuales por variante
+  const menuSnacks: MenuItem[] = [
+    {
+      id: 4,
+      name: "Croissant Dulce",
+      image: "/i3.jpg", // Imagen general si la variante no tiene
+      variants: [
+        {
+          name: "Relleno Clásico",
+          description: "1 Croissant, Paleta de hielo (vainilla), Porción crema, Nutella, 1 topping.",
+          price: "$85 MXN",
+          image: "/i3.jpg"
+        }
+      ]
+    },
+    {
+      id: 5,
+      name: "Pan de Muerto",
+      image: "/pan_muerto.jpg",
+      variants: [
+        {
+          name: "Relleno Clásico",
+          description: "1 pan de muerto, Fresas, 1 porción de crema, 1 topping (almendras).",
+          price: "$85 MXN",
+          image: "/pan_muerto.jpg" 
+        },
+        {
+          name: "Relleno Nutella",
+          description: "1 pan de muerto, Fresas, 1 porción de crema, Nutella, 2 toppings.",
+          price: "$95 MXN",
+          image: "/pan_muerto.jpg"
+        }
+      ]
+    },
+    {
+      id: 6,
+      name: "Mini Pancakes",
+      image: "/i2.jpg",
+      variants: [
+        {
+          name: "Clásicos",
+          description: "12 mini pancakes, Fresas, Plátano, 1 porción de crema, 1 topping, 1 jalea.",
+          price: "$85 MXN",
+          image: "/i1.jpg" 
+        },
+        {
+          name: "Nutella",
+          description: "12 mini pancakes, Fresas, Porción de crema, Nutella, 3 topping.",
+          price: "$90 MXN",
+          image: "/i1.jpg" 
+        },
+        {
+          name: "Nutella Banana",
+          description: "12 mini pancakes, plátano, Porción de crema, Nutella, 3 topping.",
+          price: "$90 MXN",
+          image: "/i1.jpg"
+        },
+        {
+          name: "Mini King",
+          description: "15 mini pancakes, Fresas, Plátano, Durazno (frutilla), 1 porción de crema, 3 topping, 2 jalea.",
+          price: "$100 MXN",
+          image: "/i1.jpg"
+        }
+      ]
+    }
+  ];
+
+  const activeMenu = activeTab === 'eventos' ? menuEventos : menuSnacks;
+  
+  const heroContent = {
+    eventos: {
+      tag: "¡Para tus celebraciones!",
+      titlePart1: "Sabor, Calidad",
+      titlePart2: "& Presentación",
+      description: "Será un placer atenderte y ser parte de tus momentos especiales. Contamos con barra de snacks, bebidas preparadas y postres para elevar tu evento."
+    },
+    snack: {
+      tag: "¡Para tu antojo de fin de semana!",
+      titlePart1: "Tus Antojos",
+      titlePart2: "Al Instante",
+      description: "Disfruta de nuestra deliciosa variedad de snacks preparados al momento. El sabor que ya conoces, listo para disfrutar en tu día a día."
+    }
+  };
+
+  const currentHero = heroContent[activeTab];
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-[#1A1A1A] selection:text-[#FDFBF7] overflow-x-hidden">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-[#1A1A1A] selection:text-[#FDFBF7] overflow-x-hidden transition-colors duration-500">
       <Head>
-        <title>MOED Snack Bar | Sabor, Calidad y Presentación</title>
-        <meta name="description" content="MOED Snack Bar para tus eventos especiales." />
+        <title>MOED | {activeTab === 'eventos' ? 'Snack Bar para Eventos' : 'Tus Snacks Favoritos'}</title>
+        <meta name="description" content="MOED Snack Bar y Antojos." />
       </Head>
 
-      {/* Navbar */}
-      <nav className="flex justify-between items-center py-6 px-6 md:px-8 max-w-7xl mx-auto border-b border-gray-200">
+      <nav className="flex flex-col md:flex-row justify-between items-center py-6 px-6 md:px-8 max-w-7xl mx-auto border-b border-gray-200 gap-6 md:gap-0">
         <div className="text-2xl md:text-3xl font-serif font-black tracking-tighter">
-          MOED<span className="text-xs md:text-sm font-sans font-light tracking-normal ml-1 md:ml-2 uppercase text-gray-500">Snack Bar</span>
+          MOED<span className="text-xs md:text-sm font-sans font-light tracking-normal ml-1 md:ml-2 uppercase text-gray-500">
+            {activeTab === 'eventos' ? 'Snack Bar' : 'Snacks'}
+          </span>
         </div>
+
+        <div className="relative bg-gray-200/60 p-1.5 rounded-full flex items-center shadow-inner border border-gray-300/50 w-full sm:w-auto">
+          <div 
+            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-md transition-transform duration-500 ease-out ${
+              activeTab === 'eventos' ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          />
+          
+          <button 
+            onClick={() => setActiveTab('eventos')}
+            className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 md:px-8 py-2.5 rounded-full font-medium transition-colors duration-300 text-sm md:text-base ${
+              activeTab === 'eventos' ? 'text-black' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <PartyPopper size={18} />
+            <span>Eventos</span>
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab('snack')}
+            className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 md:px-8 py-2.5 rounded-full font-medium transition-colors duration-300 text-sm md:text-base ${
+              activeTab === 'snack' ? 'text-black' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Store size={18} />
+            <span>Snacks</span>
+          </button>
+        </div>
+
         <a 
           href="https://wa.me/526863403935" 
           target="_blank" 
           rel="noreferrer"
-          className="flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full font-medium hover:bg-[#20b858] transition-colors text-sm md:text-base"
+          className="hidden md:flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#20b858] transition-colors text-base shadow-sm hover:shadow"
         >
-          <FaWhatsapp size={18} className="w-4 h-4 md:w-5 md:h-5"/>
-          <span className="hidden sm:inline">686 340 3935</span>
+          <FaWhatsapp size={18} className="w-5 h-5"/>
+          <span>686 340 3935</span>
         </a>
       </nav>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-20 flex flex-col-reverse md:flex-row items-center gap-10 md:gap-12">
-        <div className="flex-1 space-y-6 md:space-y-8 text-center md:text-left">
-          <div className="inline-block border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm tracking-widest uppercase font-semibold text-gray-600">
-            ¡Ya estamos disponibles!
+      <section className="max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-16 flex flex-col-reverse md:flex-row items-center gap-10 md:gap-12 min-h-[60vh]">
+        <div className="flex-1 space-y-6 md:space-y-8 text-center md:text-left transition-all duration-500">
+          <div className="inline-block border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm tracking-widest uppercase font-semibold text-gray-600 bg-white/50 backdrop-blur-sm">
+            {currentHero.tag}
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold leading-tight">
-            Sabor, Calidad <br />
-            <span className="italic font-light text-3xl sm:text-4xl md:text-6xl">& Presentación</span>
+          
+          <h1 key={currentHero.titlePart1} className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold leading-tight animate-fade-in-up">
+            {currentHero.titlePart1} <br />
+            <span className="italic font-light text-3xl sm:text-4xl md:text-6xl text-gray-800">{currentHero.titlePart2}</span>
           </h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-xl mx-auto md:mx-0 leading-relaxed">
-            Será un placer atenderte y ser parte de tus momentos especiales. Contamos con barra de snacks, bebidas preparadas y postres para elevar tu evento.
+          
+          <p key={currentHero.description} className="text-base md:text-lg text-gray-600 max-w-xl mx-auto md:mx-0 leading-relaxed animate-fade-in">
+            {currentHero.description}
           </p>
+          
           <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 pt-2 md:pt-4">
             <a 
               href="https://wa.me/526863403935"
-              className="flex justify-center items-center gap-2 bg-[#1A1A1A] text-white px-8 py-3.5 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-black transition-colors"
+              className="flex justify-center items-center gap-2 bg-[#1A1A1A] text-white px-8 py-3.5 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-black transition-transform hover:scale-105 duration-300 shadow-xl shadow-black/10"
             >
-              Cotiza tu evento
+              {activeTab === 'eventos' ? 'Cotiza tu evento' : 'Haz tu pedido'}
             </a>
             <a 
               href="#menu"
-              className="flex justify-center items-center gap-2 bg-transparent text-[#1A1A1A] border border-[#1A1A1A] px-8 py-3.5 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-gray-50 transition-colors"
+              className="flex justify-center items-center gap-2 bg-transparent text-[#1A1A1A] border-2 border-[#1A1A1A] px-8 py-3.5 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-[#1A1A1A] hover:text-white transition-all duration-300"
             >
-              Ver menú
+              {activeTab === 'eventos' ? 'Ver más' : 'Ver Menú'}
             </a>
           </div>
         </div>
         
-        {/* Hero Image / Logo Placeholder */}
         <div className="flex-1 w-full flex justify-center items-center mb-6 md:mb-0">
-          {/* Usamos medidas exactas (w-64 h-64 en celular, w-[400px] h-[400px] en PC) para forzar el círculo perfecto */}
-          <div className="relative w-64 h-64 md:w-[400px] md:h-[400px] flex-shrink-0 rounded-full overflow-hidden border-8 border-white shadow-2xl bg-white flex items-center justify-center">
-            <img src="/logo.jpg" alt="MOED Logo" className="w-full h-full object-contain p-4" /> 
+          <div className="relative w-64 h-64 md:w-[400px] md:h-[400px] flex-shrink-0 rounded-full overflow-hidden border-8 border-white shadow-2xl bg-white flex items-center justify-center transition-transform hover:scale-105 duration-500">
+            <img 
+              key={activeTab} 
+              src="/logo.jpg" 
+              alt="MOED Logo" 
+              className="w-full h-full object-contain p-4 animate-fade-in" 
+            /> 
           </div>
         </div>
       </section>
 
-      {/* Menu / Showcase Section */}
-      <section id="menu" className="bg-white py-16 md:py-24 border-t border-gray-100">
+      <section id="menu" className="bg-white py-16 md:py-24 border-t border-gray-100 transition-colors duration-500">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 md:mb-16 px-6 md:px-8">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Nuestra Barra</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+              {activeTab === 'eventos' ? 'Nuestra Barra' : 'Menú de Snacks'}
+            </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
-              Cuidamos cada detalle para ofrecerte la mejor experiencia visual y de sabor en tu evento.
+              {activeTab === 'eventos' 
+                ? 'Cuidamos cada detalle para ofrecerte la mejor experiencia visual y de sabor en tu evento.' 
+                : 'Antojos preparados al instante con los ingredientes más frescos.'}
             </p>
           </div>
 
           <div className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none gap-4 md:gap-12 px-6 md:px-8 pb-8 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {menuItems.map((item) => (
-              <div 
-                key={item.id} 
-                // ✨ AQUÍ ESTÁ LA SOLUCIÓN DEL TAMAÑO EN MÓVILES ✨
-                // Cambiamos a w-[65vw] (65% de la pantalla) con un límite de 260px.
-                // En PC (md:) vuelve a ser automático para llenar sus 3 columnas.
-                className="w-[65vw] max-w-[260px] md:max-w-none md:w-auto snap-center md:snap-align-none shrink-0 group cursor-pointer"
-              >
-                {/* Contenedor de la imagen */}
-                <div className="aspect-[4/5] bg-[#FDFBF7] rounded-2xl mb-4 md:mb-6 overflow-hidden relative shadow-sm md:shadow-none">
-                  {/* Etiqueta Image de Next.js */}
-                  <Image 
-                    src={item.image} 
-                    alt={item.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 260px, 33vw"
-                  />
-                </div>
-                <h3 className="text-lg md:text-xl font-bold mb-2">{item.name}</h3>
-                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
+            {activeMenu.map((item) => (
+              <MenuCard key={`${activeTab}-${item.id}`} item={item} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-[#1A1A1A] text-white py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
@@ -165,7 +368,7 @@ export default function Home() {
             <h4 className="font-bold mb-4 md:mb-6 uppercase tracking-wider text-sm">Redes Sociales</h4>
             <div className="flex gap-4 justify-center md:justify-start">
               <a 
-                href="https://www.facebook.com/profile.php?id=61593983091507&__cft__[0]=AZgnqVhVgQek2hI841RRAyAiEO1X6YilVs5zq2KIAdrJJLNwkidCSPWV3ak_IZUK8s0OUVwu5QyawbJlffbcc5cCqQoOY_Fu-1i_tO5m8JXbL4CobZ8g2qAjPzOvh3QUKdzvNYkDVp6E0IksSmI&__tn__=-]K-R" 
+                href="https://www.facebook.com/profile.php?id=61593983091507" 
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#1877F2] transition-colors duration-300"
