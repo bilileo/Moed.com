@@ -461,7 +461,7 @@ export default function Home() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 md:px-8 mt-12 md:mt-16 pt-8 border-t border-white/10 text-center text-gray-500 text-xs md:text-sm">
-          © {new Date().getFullYear()} MOED Snack Bar.<br/>Made by <a href="https://github.com/bilileo" target="_blank" rel="noreferrer" className="hover:underline">bili ©</a> Todos los derechos reservados.
+          © {new Date().getFullYear()} MOED Snack Bar.<br/><a href="https://github.com/bilileo" target="_blank" rel="noreferrer" className="hover:underline">Made by bili ©</a> Todos los derechos reservados.
         </div>
       </footer>
     </div>
