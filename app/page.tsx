@@ -216,7 +216,7 @@ export default function Home() {
       id: 9,
       name: "Fit Detox",
       description: "Jugo verde con apio, piña, Naranja, Nopal y espinaca, endulzado con miel de agave.",
-      price: "$75 MXN",
+      price: "$80 MXN",
       image: "/b1.jpg", // Recuerda subir esta imagen a tu carpeta public
     },
     {
