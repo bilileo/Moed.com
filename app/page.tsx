@@ -172,7 +172,7 @@ export default function Home() {
           name: "Clásicos",
           description: "12 mini pancakes, Fresas, Plátano, 1 porción de crema, 1 topping, 1 jalea.",
           price: "$85 MXN",
-          image: "/i1.jpg" 
+          image: "/i7.jpg" 
         },
         {
           name: "Nutella",
