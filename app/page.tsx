@@ -103,6 +103,26 @@ export default function Home() {
   // NUEVO ESTADO: Controla si vemos comida o bebidas dentro de la sección "snack"
   const [menuCategory, setMenuCategory] = useState<'comida' | 'bebidas'>('comida');
 
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const catParam = params.get('cat');
+
+    if (tabParam === 'snack') {
+      setActiveTab('snack');
+      if (catParam === 'bebidas') {
+        setMenuCategory('bebidas');
+      }
+      
+      setTimeout(() => {
+        const menuElement = document.getElementById('menu');
+        if (menuElement) {
+          menuElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    }
+  }, []);
+
   const menuEventos: MenuItem[] = [
     {
       id: 1,
