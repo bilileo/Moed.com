@@ -190,7 +190,7 @@ export default function Home() {
           name: "Mini King",
           description: "15 mini pancakes, Fresas, Plátano, Durazno (frutilla), 1 porción de crema, 3 topping, 2 jalea.",
           price: "$100 MXN",
-          image: "/i7.jpg"
+          image: "/i1.jpg"
         }
       ]
     }
