@@ -47,7 +47,7 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
   };
 
   return (
-    <div className="w-[65vw] max-w-[280px] md:max-w-none md:w-auto snap-start md:snap-align-none shrink-0 group flex flex-col">
+    <div className="w-[65vw] max-w-[280px] md:max-w-none md:w-auto snap-center md:snap-align-none shrink-0 group flex flex-col">
       <div className="aspect-[4/5] bg-[#FDFBF7] rounded-2xl mb-4 overflow-hidden relative shadow-sm">
         <Image 
           key={currentImage}
@@ -397,7 +397,7 @@ export default function Home() {
             </div>
           )}
 
-          <div className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none gap-4 md:gap-12 px-6 md:px-8 pb-8 md:pb-0 scroll-pl-6 md:scroll-pl-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none gap-4 md:gap-12 px-6 md:px-8 pb-8 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {activeMenu.map((item) => (
               <MenuCard key={`${activeTab}-${menuCategory}-${item.id}`} item={item} />
             ))}
