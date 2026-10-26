@@ -5,12 +5,12 @@ import { Phone, MapPin, PartyPopper, Store, ChevronLeft, ChevronRight, CreditCar
 import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaFacebookMessenger } from 'react-icons/fa';
 
-// 1. Interfaz actualizada: agregamos 'image' opcional en las variantes
+// 1. Interfaz actualizada
 interface MenuVariant {
   name: string;
   description: string;
   price: string;
-  image?: string; // <--- Nueva propiedad
+  image?: string; 
 }
 
 interface MenuItem {
@@ -22,18 +22,16 @@ interface MenuItem {
   variants?: MenuVariant[];
 }
 
-// 2. Componente de tarjeta con imagen dinámica
+// 2. Componente de tarjeta
 const MenuCard = ({ item }: { item: MenuItem }) => {
   const [activeIdx, setActiveIdx] = useState(0);
 
   const hasVariants = item.variants && item.variants.length > 0;
   
-  // Extraemos la información activa, incluyendo la imagen
   const currentPrice = hasVariants ? item.variants![activeIdx].price : item.price;
   const currentDesc = hasVariants ? item.variants![activeIdx].description : item.description;
   const currentVariantName = hasVariants ? item.variants![activeIdx].name : null;
   
-  // Si la variante tiene imagen propia, la usamos; si no, usamos la general del item
   const currentImage = hasVariants && item.variants![activeIdx].image 
     ? item.variants![activeIdx].image 
     : item.image;
@@ -51,7 +49,6 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
   return (
     <div className="w-[65vw] max-w-[280px] md:max-w-none md:w-auto snap-center md:snap-align-none shrink-0 group flex flex-col">
       <div className="aspect-[4/5] bg-[#FDFBF7] rounded-2xl mb-4 overflow-hidden relative shadow-sm">
-        {/* El atributo key fuerza la re-animación cuando la URL de la imagen cambia */}
         <Image 
           key={currentImage}
           src={currentImage!} 
@@ -69,35 +66,24 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
 
       <h3 className="text-lg md:text-xl font-bold mb-2">{item.name}</h3>
 
-      {/* Selector de variantes si existen */}
       {hasVariants && (
         <div className="flex items-center justify-between bg-gray-100/80 rounded-full px-2 py-1 mb-3">
-          <button 
-            onClick={prevVariant}
-            className="p-1 hover:bg-white rounded-full transition-colors"
-          >
+          <button onClick={prevVariant} className="p-1 hover:bg-white rounded-full transition-colors">
             <ChevronLeft size={16} />
           </button>
-          
           <span className="text-sm font-semibold text-gray-800 flex-1 text-center truncate px-2">
             {currentVariantName}
           </span>
-          
-          <button 
-            onClick={nextVariant}
-            className="p-1 hover:bg-white rounded-full transition-colors"
-          >
+          <button onClick={nextVariant} className="p-1 hover:bg-white rounded-full transition-colors">
             <ChevronRight size={16} />
           </button>
         </div>
       )}
 
-      {/* Descripción animada al cambiar */}
       <p key={activeIdx} className="text-gray-600 text-sm md:text-base leading-relaxed min-h-[80px] animate-fade-in flex-grow">
         {currentDesc}
       </p>
 
-      {/* Indicadores de página */}
       {hasVariants && item.variants!.length > 1 && (
         <div className="flex justify-center gap-1.5 mt-4">
           {item.variants!.map((_, idx) => (
@@ -114,6 +100,8 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'eventos' | 'snack'>('eventos');
+  // NUEVO ESTADO: Controla si vemos comida o bebidas dentro de la sección "snack"
+  const [menuCategory, setMenuCategory] = useState<'comida' | 'bebidas'>('comida');
 
   const menuEventos: MenuItem[] = [
     {
@@ -136,18 +124,23 @@ export default function Home() {
     }
   ];
 
-  // 3. Datos de snacks con imágenes individuales por variante
   const menuSnacks: MenuItem[] = [
     {
       id: 4,
-      name: "Croissant Dulce",
-      image: "/i3.jpg", // Imagen general si la variante no tiene
+      name: "Croissant",
+      image: "/i3.jpg", 
       variants: [
         {
           name: "Relleno Clásico",
           description: "1 Croissant, Paleta de hielo (vainilla), Porción crema, Nutella, 1 topping.",
           price: "$85 MXN",
           image: "/i3.jpg"
+        },
+        {
+          name: "Relleno Especial",
+          description: "1 Croissant, Rajas de chile poblano, Jamón, Queso y Lechuga.",
+          price: "$85 MXN",
+          image: "/i8.jpg"
         }
       ]
     },
@@ -197,13 +190,48 @@ export default function Home() {
           name: "Mini King",
           description: "15 mini pancakes, Fresas, Plátano, Durazno (frutilla), 1 porción de crema, 3 topping, 2 jalea.",
           price: "$100 MXN",
-          image: "/i1.jpg"
+          image: "/i7.jpg"
         }
       ]
     }
   ];
 
-  const activeMenu = activeTab === 'eventos' ? menuEventos : menuSnacks;
+  // NUEVA DATA: Arreglo de bebidas
+  const menuBebidas: MenuItem[] = [
+    {
+      id: 7,
+      name: "Matcha Protein",
+      description: "Delicioso matcha orgánico preparado con leche que contiene 26gr de proteína con cold foam de matcha.",
+      price: "$80 MXN",
+      image: "/b3.jpg", // Recuerda subir esta imagen a tu carpeta public
+    },
+    {
+      id: 8,
+      name: "Tropical MOED",
+      description: "Smoothie de mango con plátano con decoración Dragon Fruit, endulzado con miel de agave.",
+      price: "$75 MXN",
+      image: "/b2.jpg", // Recuerda subir esta imagen a tu carpeta public
+    },
+    {
+      id: 9,
+      name: "Fit Detox",
+      description: "Jugo verde con apio, piña, Naranja, Nopal y espinaca, endulzado con miel de agave.",
+      price: "$75 MXN",
+      image: "/b1.jpg", // Recuerda subir esta imagen a tu carpeta public
+    },
+    {
+      id: 10,
+      name: "Red Power",
+      description: "Pruebalo y siente el poder fluir por tus venas. Anda animate a probarlo...",
+      price: "$75 MXN",
+      image: "/b4.jpg", // Recuerda subir esta imagen a tu carpeta public
+    }
+  ];
+
+  // Lógica para decidir qué menú renderizar
+  const activeMenu = activeTab === 'eventos' 
+    ? menuEventos 
+    : (menuCategory === 'comida' ? menuSnacks : menuBebidas);
   
   const heroContent = {
     eventos: {
@@ -216,7 +244,7 @@ export default function Home() {
       tag: "¡Para tu antojo de fin de semana!",
       titlePart1: "Tus Antojos",
       titlePart2: "Al Instante",
-      description: "Disfruta de nuestra deliciosa variedad de snacks preparados al momento. El sabor que ya conoces, listo para disfrutar en tu día a día."
+      description: "Disfruta de nuestra deliciosa variedad de snacks y bebidas preparadas al momento. El sabor que ya conoces, listo para disfrutar."
     }
   };
 
@@ -290,7 +318,6 @@ export default function Home() {
             {currentHero.description}
           </p>
           
-                  {/* Botones de acción */}
           <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
             <a 
               href="https://wa.me/526863403935"
@@ -306,7 +333,6 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Indicador de métodos de pago */}
           <div className="flex items-center justify-center md:justify-start gap-2.5 text-sm text-gray-500 font-medium animate-fade-in">
             <CreditCard size={18} className="text-gray-400" />
             <span>Aceptamos pagos con tarjeta</span>
@@ -332,32 +358,59 @@ export default function Home() {
 
       <section id="menu" className="bg-white py-16 md:py-24 border-t border-gray-100 transition-colors duration-500">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 md:mb-16 px-6 md:px-8">
+          <div className="text-center mb-8 md:mb-10 px-6 md:px-8">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-              {activeTab === 'eventos' ? 'Nuestra Barra' : 'Menú de Snacks'}
+              {activeTab === 'eventos' ? 'Nuestra Barra' : 'Nuestro Menú'}
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
               {activeTab === 'eventos' 
                 ? 'Cuidamos cada detalle para ofrecerte la mejor experiencia visual y de sabor en tu evento.' 
-                : 'Antojos preparados al instante con los ingredientes más frescos.'}
+                : 'Antojos y bebidas preparadas al instante con los ingredientes más frescos.'}
             </p>
           </div>
 
+          {/* NUEVO SUB-SWITCH DE CATEGORÍAS (Solo visible en la pestaña de Snacks) */}
+          {activeTab === 'snack' && (
+            <div className="flex justify-center mb-10 animate-fade-in">
+              <div className="bg-gray-100/80 p-1.5 rounded-full flex gap-1 shadow-inner border border-gray-200">
+                <button 
+                  onClick={() => setMenuCategory('comida')}
+                  className={`px-5 md:px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    menuCategory === 'comida' 
+                      ? 'bg-white shadow text-black' 
+                      : 'text-gray-500 hover:text-black'
+                  }`}
+                >
+                  🥐 Comida
+                </button>
+                <button 
+                  onClick={() => setMenuCategory('bebidas')}
+                  className={`px-5 md:px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    menuCategory === 'bebidas' 
+                      ? 'bg-white shadow text-black' 
+                      : 'text-gray-500 hover:text-black'
+                  }`}
+                >
+                  🧋 Bebidas
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none gap-4 md:gap-12 px-6 md:px-8 pb-8 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {activeMenu.map((item) => (
-              <MenuCard key={`${activeTab}-${item.id}`} item={item} />
+              <MenuCard key={`${activeTab}-${menuCategory}-${item.id}`} item={item} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Sección de Ubicación (Solo visible en modo Snack) */}
+      {/* Resto del código... (Ubicación y Footer se mantienen exactamente igual) */}
+      
       {activeTab === 'snack' && (
         <section className="bg-white py-16 md:py-24 border-t border-gray-200 animate-fade-in-up">
           <div className="max-w-7xl mx-auto px-6 md:px-8">
             <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
-              
-              {/* Texto y Botón */}
               <div className="flex-1 text-center md:text-left space-y-6">
                 <h2 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
                   ¿Ya pediste pero no sabes dónde nos ubicamos?
@@ -377,8 +430,6 @@ export default function Home() {
                   </a>
                 </div>
               </div>
-
-              {/* Pantalla del Mapa (Iframe) */}
               <div className="flex-1 w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden shadow-lg border-4 border-gray-50 bg-gray-100">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.7148845267875!2d-115.00484793038352!3d32.57177142853233!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d7a9001824e9ed%3A0xd7c065fa0573e41e!2sMoed!5e1!3m2!1ses!2smx!4v1792896311896!5m2!1ses!2smx" 
@@ -391,7 +442,6 @@ export default function Home() {
                   title="Ubicación MOED"
                 />
               </div>
-              
             </div>
           </div>
         </section>
@@ -404,7 +454,7 @@ export default function Home() {
               MOED
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              Llevando sabor, calidad y presentation a todos tus eventos especiales.
+              Llevando sabor, calidad y presentación a todos tus eventos especiales.
             </p>
           </div>
           
@@ -425,36 +475,16 @@ export default function Home() {
           <div className="flex flex-col items-center md:items-start">
             <h4 className="font-bold mb-4 md:mb-6 uppercase tracking-wider text-sm">Redes Sociales</h4>
             <div className="flex gap-4 justify-center md:justify-start">
-              <a 
-                href="https://www.facebook.com/profile.php?id=61593586598972" 
-                target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#1877F2] transition-colors duration-300"
-              >
+              <a href="https://www.facebook.com/profile.php?id=61593586598972" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#1877F2] transition-colors duration-300">
                 <FaFacebook size={22} />
               </a>
-              <a 
-                href="https://www.instagram.com/tu_perfil" 
-                target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#E4405F] transition-colors duration-300"
-              >
+              <a href="https://www.instagram.com/moed.snack?obrf=cmY0NmxpZjhiOHNu" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#E4405F] transition-colors duration-300">
                 <FaInstagram size={22} />
               </a>
-              <a 
-                href="https://wa.me/526863403935" 
-                target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#25D366] transition-colors duration-300"
-              >
+              <a href="https://wa.me/526863403935" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#25D366] transition-colors duration-300">
                 <FaWhatsapp size={22} />
               </a>
-              <a 
-                href="https://www.messenger.com/t/profile.php?id=61593983091507" 
-                target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#25D366] transition-colors duration-300"
-              >
+              <a href="https://www.messenger.com/t/profile.php?id=61593983091507" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#25D366] transition-colors duration-300">
                 <FaFacebookMessenger size={22} />
               </a>
             </div>
