@@ -147,6 +147,19 @@ export default function Home() {
 
   const menuSnacks: MenuItem[] = [
     {
+      id: 11,
+      name: "Wrap de Pechuga",
+      image: "/wrap.jpg", 
+      variants: [
+        {
+          name: "Relleno Clásico",
+          description: "Tortilla integral (espinaca, integral, chipotle), Pechuga, Zanahoria, Lechuga, Tiras de maiz.",
+          price: "$100 MXN",
+          image: "/wrap.jpg"
+        },
+      ]
+    },
+    {
       id: 4,
       name: "Croissant",
       image: "/i3.jpg", 
@@ -162,25 +175,6 @@ export default function Home() {
           description: "1 Croissant, Toping secreto (Rajas de chile poblano 🤫), Jamón Ahumado, Queso y Lechuga.",
           price: "$85 MXN",
           image: "/i8.jpg"
-        }
-      ]
-    },
-    {
-      id: 5,
-      name: "Pan de Muerto",
-      image: "/pan_muerto.jpg",
-      variants: [
-        {
-          name: "Relleno Clásico",
-          description: "1 pan de muerto, Fresas, 1 porción de crema, 1 topping (almendras).",
-          price: "$85 MXN",
-          image: "/pan_muerto.jpg" 
-        },
-        {
-          name: "Relleno Nutella",
-          description: "1 pan de muerto, Fresas, 1 porción de crema, Nutella, 2 toppings.",
-          price: "$95 MXN",
-          image: "/pan_muerto.jpg"
         }
       ]
     },
@@ -216,16 +210,22 @@ export default function Home() {
       ]
     },
     {
-      id: 11,
-      name: "Wrap de Pechuga",
-      image: "/wrap.jpg", 
+      id: 5,
+      name: "Pan de Muerto",
+      image: "/pan_muerto.jpg",
       variants: [
         {
           name: "Relleno Clásico",
-          description: "Tortilla integral (espinaca, integral, chipotle), Pechuga, Zanahoria, Lechuga, Tiras de maiz.",
-          price: "$100 MXN",
-          image: "/wrap.jpg"
+          description: "1 pan de muerto, Fresas, 1 porción de crema, 1 topping (almendras).",
+          price: "$85 MXN",
+          image: "/pan_muerto.jpg" 
         },
+        {
+          name: "Relleno Nutella",
+          description: "1 pan de muerto, Fresas, 1 porción de crema, Nutella, 2 toppings.",
+          price: "$95 MXN",
+          image: "/pan_muerto.jpg"
+        }
       ]
     }
   ];
